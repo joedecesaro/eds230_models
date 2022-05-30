@@ -90,7 +90,7 @@ sager_aug = subset(tmp, month==8)
 cor(sager_aug$model, sager_aug$obs)
 
 # turn your evaluation metric into a function
-source("../R/compute_lowflowmetrics.R")
+source(here("R/compute_lowflowmetrics.R"))
 compute_lowflowmetrics
 compute_lowflowmetrics(m=sager$model,o=sager$obs, month=sager$month, day=sager$day, year=sager$year, wy=sager$wy)
 
@@ -160,7 +160,7 @@ is a different model run for Sagehen Creek
 
 # multiple results - lets say we've run the model for multiple years, each column
 # is streamflow for a different parameter set
-msage = read.table("../Data/sagerm.txt", header=T)
+msage = read.table(here("data/sagerm.txt"), header=T)
 
 # lets say we know the start date from our earlier output
 msage$date = sager$date
@@ -192,8 +192,8 @@ head(res)
 # use apply to compute for all the data
 # using the updated low flow metrics routing that also computed combined metrics
 
-source("../R/compute_lowflowmetrics_all.R")
-res = msage %>% select(-date, -month, -day, -year, -wy ) %>% map_df(compute_lowflowmetrics_all, o=sager$obs, month=msage$month, day=msage$day, year=msage$year, wy=msage$wy)
+source(here("R/compute_lowflowmetrics_all.R"))
+res = msage %>% select(-date, -month, -day, -year, -wy ) %>% map_df(compute_lowflowmetrics_all, o=sager$obs, month=msage$month, day=msage$day, year=msage$year, wy=msage$wy, max_err_low_month = 0.6, max_err_annual_min = 0.6, wts=c(0.25,0.25,0.25,0.25))
 
 
 # interesting to look at range of metrics - could use this to decide on
